@@ -4,6 +4,8 @@ plugins {
 	id("com.gradle.plugin-publish") version "1.1.0"
 }
 
+group = "io.github.ushiosan"
+
 java {
 	sourceCompatibility = JavaVersion.VERSION_11
 	targetCompatibility = JavaVersion.VERSION_11
@@ -12,18 +14,18 @@ java {
 gradlePlugin {
 	// Define the plugin
 	val customJavaFXPlugin by plugins.creating {
-		id = "io.github.ushiosan.custom-jfx-plugin"
+		id = "io.github.ushiosan.custom_jfx_plugin"
 		version = "0.1.0"
 		displayName = "Custom JavaFX Plugin"
 		description = "Create projects with JavaFX with different configurations from the same platform"
-		implementationClass = "ushiosan.custom.jfx.CustomJavaFxPlugin"
+		implementationClass = "custom_jfx_plugin.CustomJavaFxPlugin"
 	}
 }
 
 pluginBundle {
 	website = "https://github.com/Ushiosan23/custom-jfx-plugin"
 	vcsUrl = "https://github.com/Ushiosan23/custom-jfx-plugin.git"
-	tags = listOf("java", "javafx", "plugin")
+	tags = listOf("java", "javafx", "manager")
 }
 
 // Add a source set for the functional test suite
