@@ -1,9 +1,9 @@
-import ushiosan.custom.jfx.configuration.JfxModule
+import custom_jfx_plugin.configuration.JfxModule
 
 plugins {
 	java
 	application
-	id("io.github.ushiosan.custom-jfx-plugin") version "0.1.0"
+	id("io.github.ushiosan.custom_jfx_plugin") version "0.1.0"
 }
 
 application {
