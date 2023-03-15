@@ -22,7 +22,7 @@ In your project in the file ```build.gradle``` or ```build.gradle.kts``` you mus
 import custom_jfx_plugin.configuration.JfxModule
 
 plugins {
-	id "io.github.ushiosan.custom_jfx_plugin" version "0.1.0"
+	id "io.github.ushiosan23.custom_jfx_plugin" version "0.1.0"
 }
 
 
@@ -38,7 +38,7 @@ customJfx {
 import custom_jfx_plugin.configuration.JfxModule
 
 plugins {
-	id("io.github.ushiosan.custom_jfx_plugin") version "0.1.0"
+	id("io.github.ushiosan23.custom_jfx_plugin") version "0.1.0"
 }
 
 
