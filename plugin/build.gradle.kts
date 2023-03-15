@@ -4,7 +4,7 @@ plugins {
 	id("com.gradle.plugin-publish") version "1.1.0"
 }
 
-group = "io.github.ushiosan"
+group = "io.github.ushiosan23"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_11
