@@ -194,6 +194,22 @@ public final class ModuleUtils {
 		return pattern.matcher(filename).matches();
 	}
 	
+	/**
+	 * Check if classpath file is a valid jfx jar file
+	 *
+	 * @param file the file to inspect
+	 * @return {@code true} if the file is a valid jfx file or {@code false} otherwise
+	 */
+	public static boolean compareAnyJfxFile(@NotNull File file) {
+		// Temporal variables
+		String filename = file.getName();
+		String nameFormat = String.format(ARTIFACT_NAME_FORMAT, "");
+		Pattern pattern = Pattern.compile(String.format("%s.+\\.jar", nameFormat));
+		
+		// Check result
+		return pattern.matcher(filename).matches();
+	}
+	
 	/* -----------------------------------------------------------------------
 	 * Internal methods
 	 * -----------------------------------------------------------------------*/

@@ -4,6 +4,8 @@ plugins {
 	id("com.gradle.plugin-publish") version "1.1.0"
 }
 
+val pluginName = "custom_jfx_plugin"
+
 group = "io.github.ushiosan23"
 
 java {
@@ -14,8 +16,8 @@ java {
 gradlePlugin {
 	// Define the plugin
 	val customJavaFXPlugin by plugins.creating {
-		id = "io.github.ushiosan23.custom_jfx_plugin"
-		version = "0.1.0"
+		id = "io.github.ushiosan23.$pluginName"
+		version = "0.1.1"
 		displayName = "Custom JavaFX Plugin"
 		description = "Create projects with JavaFX with different configurations from the same platform"
 		implementationClass = "custom_jfx_plugin.CustomJfxPlugin"
@@ -53,12 +55,31 @@ tasks.named<Test>("test") {
 	useJUnitPlatform()
 }
 
+afterEvaluate {
+	publishing {
+		publications {
+			withType(MavenPublication::class.java) {
+				val artifactName = "plugin"
+				if (artifactId.endsWith(artifactName)) {
+					val partialName = artifactId.substring(0, artifactId.length - artifactName.length)
+					
+					artifactId = if (partialName.isBlank()) {
+						pluginName
+					} else {
+						"$partialName.$pluginName"
+					}
+				}
+			}
+		}
+	}
+}
+
 dependencies {
 	implementation("org.javamodularity:moduleplugin:1.8.12")
 	implementation("com.google.code.gson:gson:2.10.1")
 	implementation("com.github.ushiosan23:jvm-utilities:0.4.3")
 	
-	compileOnly("org.jetbrains:annotations:24.0.0")
+	compileOnly("org.jetbrains:annotations:24.0.1")
 	// Use JUnit Jupiter for testing.
-	testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
