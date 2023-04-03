@@ -3,6 +3,7 @@ package custom_jfx_plugin.dependency.maven;
 import custom_jfx_plugin.dependency.base.Resolver;
 import custom_jfx_plugin.dependency.maven.response.MavenArtifact;
 import custom_jfx_plugin.dependency.maven.response.MavenResponse;
+import custom_jfx_plugin.utils.Msg;
 import org.jetbrains.annotations.NotNull;
 import ushiosan.jvm_utilities.lang.Obj;
 import ushiosan.jvm_utilities.lang.collection.Collections;
@@ -114,7 +115,7 @@ public final class MavenResolver extends Resolver<String, String> {
 		String realArtifact = configuration.substring(0, matcher.start()) + resolvedArtifact;
 		
 		// Attach resolved artifact to cached elements
-		if (!silent) System.out.printf("Resolved dependency: (%s) %s\n", specialConfig, realArtifact);
+		if (!silent) Msg.info("Resolved dependency (%s) %s", specialConfig, realArtifact);
 		dependencyCache.add(new DependencyCache(configuration, realArtifact, specialConfig));
 		
 		return realArtifact;

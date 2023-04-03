@@ -3,12 +3,12 @@ package custom_jfx_plugin.configuration;
 import custom_jfx_plugin.dependency.maven.MavenResolver;
 import custom_jfx_plugin.property.ObservableProperty;
 import custom_jfx_plugin.utils.ModuleUtils;
+import custom_jfx_plugin.utils.Msg;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ushiosan.jvm_utilities.lang.Obj;
-import ushiosan.jvm_utilities.lang.collection.Collections;
 import ushiosan.jvm_utilities.lang.collection.elements.Pair;
 import ushiosan.jvm_utilities.system.Arch;
 import ushiosan.jvm_utilities.system.Platform;
@@ -17,17 +17,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static ushiosan.jvm_utilities.lang.Obj.toObjString;
+
 public abstract class JfxOptions {
 	
 	/**
 	 * Default JavaFX version
 	 */
 	private static final String DEFAULT_VERSION = "#latest#";
-	
-	/**
-	 * Default JavaFX module dependencies
-	 */
-	private static final List<JfxModule> DEFAULT_MODULES = Collections.listOf(JfxModule.ALL);
 	
 	/**
 	 * Default JavaFX dependency configuration
@@ -101,23 +98,36 @@ public abstract class JfxOptions {
 	 * -----------------------------------------------------------------------*/
 	
 	private void updateArch(@Nullable Arch old, @Nullable Arch newArch) {
-		if (old != newArch) updateProjectConfiguration(null, false);
+		if (old != newArch) {
+			Msg.error(project, "Arch update -> %s to %s", toObjString(old), toObjString(newArch));
+			updateProjectConfiguration(null, false);
+		}
 	}
 	
 	private void updateDependencyConfiguration(@Nullable String old, @Nullable String newConfiguration) {
-		if (!Objects.equals(old, newConfiguration)) updateProjectConfiguration(old, false);
+		if (!Objects.equals(old, newConfiguration)) {
+			Msg.error(project, "Configuration update -> %s to %s", toObjString(old), toObjString(newConfiguration));
+			updateProjectConfiguration(old, false);
+		}
 	}
 	
 	private void updateModules(@Nullable List<JfxModule> old, @Nullable List<JfxModule> newModules) {
+		Msg.error(project, "Modules update -> %s to %s", toObjString(old), toObjString(newModules));
 		updateProjectConfiguration(null, false);
 	}
 	
 	private void updatePlatform(@Nullable Platform old, @Nullable Platform newPlatform) {
-		if (old != newPlatform) updateProjectConfiguration(null, false);
+		if (old != newPlatform) {
+			Msg.error(project, "Platform update -> %s to %s", toObjString(old), toObjString(newPlatform));
+			updateProjectConfiguration(null, false);
+		}
 	}
 	
 	private void updateVersion(@Nullable String old, @Nullable String newVersion) {
-		if (!Objects.equals(old, newVersion)) updateProjectConfiguration(null, false);
+		if (!Objects.equals(old, newVersion)) {
+			Msg.error(project, "Version update -> %s to %s", toObjString(old), toObjString(newVersion));
+			updateProjectConfiguration(null, false);
+		}
 	}
 	
 	/**
