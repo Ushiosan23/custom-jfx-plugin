@@ -17,7 +17,7 @@ gradlePlugin {
 	// Define the plugin
 	val customJavaFXPlugin by plugins.creating {
 		id = "io.github.ushiosan23.$pluginName"
-		version = "0.1.1"
+		version = "0.1.2"
 		displayName = "Custom JavaFX Plugin"
 		description = "Create projects with JavaFX with different configurations from the same platform"
 		implementationClass = "custom_jfx_plugin.CustomJfxPlugin"
