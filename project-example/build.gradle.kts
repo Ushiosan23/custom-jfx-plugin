@@ -3,7 +3,7 @@ import custom_jfx_plugin.configuration.JfxModule
 plugins {
 	java
 	application
-	id("io.github.ushiosan23.custom_jfx_plugin") version "0.1.1"
+	id("io.github.ushiosan23.custom_jfx_plugin") version "0.1.3"
 }
 
 application {
