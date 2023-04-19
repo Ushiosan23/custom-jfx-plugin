@@ -65,6 +65,16 @@ public abstract class JfxOptions {
 	 */
 	public final ObservableProperty<String> dependencyConfiguration;
 	
+	/**
+	 * Dependency configuration name
+	 */
+	public final ObservableProperty<String> testDependencyConfiguration;
+	
+	/**
+	 * Use dependencies in the test section
+	 */
+	public final ObservableProperty<Boolean> useTest;
+	
 	/* -----------------------------------------------------------------------
 	 * Constructors
 	 * -----------------------------------------------------------------------*/
@@ -82,6 +92,8 @@ public abstract class JfxOptions {
 		platform = ObservableProperty.create(Platform.getRunningPlatform());
 		modules = ObservableProperty.create();
 		dependencyConfiguration = ObservableProperty.create(DEFAULT_DEPENDENCY_CONFIGURATION);
+		testDependencyConfiguration = ObservableProperty.create("testImplementation");
+		useTest = ObservableProperty.create(true);
 		
 		updateProjectConfiguration(null, true);
 		
@@ -91,6 +103,9 @@ public abstract class JfxOptions {
 		platform.addChangeListener(this::updatePlatform);
 		modules.addChangeListener(this::updateModules);
 		dependencyConfiguration.addChangeListener(this::updateDependencyConfiguration);
+		useTest.addChangeListener((old, nVal) -> {
+			if (old != nVal) updateProjectConfiguration(null, false);
+		});
 	}
 	
 	/* -----------------------------------------------------------------------
@@ -133,6 +148,7 @@ public abstract class JfxOptions {
 	/**
 	 * Update project dependency configuration
 	 */
+	@SuppressWarnings("DataFlowIssue")
 	private void updateProjectConfiguration(@Nullable String oldConfiguration, boolean silent) {
 		// Check if dependencies exists
 		if (modules.isNotPresent()) return;
@@ -145,6 +161,9 @@ public abstract class JfxOptions {
 		
 		// Remove old dependencies
 		removeOldDependencies(oldConfiguration);
+		if (useTest.isPresent() && testDependencyConfiguration.isPresent() && useTest.get()) {
+			removeOldDependencies(testDependencyConfiguration.get());
+		}
 		
 		// Resolve dependencies
 		for (String item : moduleArtifacts) {
@@ -154,6 +173,11 @@ public abstract class JfxOptions {
 			// Attach dependency
 			project.getDependencies()
 				.add(dependencyConfiguration.getOrElse(DEFAULT_DEPENDENCY_CONFIGURATION), artifactId);
+			
+			if (useTest.isPresent() && testDependencyConfiguration.isPresent() && useTest.get()) {
+				project.getDependencies()
+					.add(testDependencyConfiguration.get(), artifactId);
+			}
 		}
 	}
 	
