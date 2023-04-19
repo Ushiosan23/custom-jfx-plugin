@@ -34,7 +34,7 @@ public abstract class JfxOptions {
 	/**
 	 * Default JavaFX dependency configuration
 	 */
-	private static final String DEFAULT_DEBUG_DEPENDENCY_CONFIGURATION = "testImplementation";
+	private static final String DEFAULT_TEST_DEPENDENCY_CONFIGURATION = "testImplementation";
 	
 	/* -----------------------------------------------------------------------
 	 * Properties
@@ -70,16 +70,6 @@ public abstract class JfxOptions {
 	 */
 	public final ObservableProperty<String> dependencyConfiguration;
 	
-	/**
-	 * Dependency configuration name
-	 */
-	public final ObservableProperty<String> testDependencyConfiguration;
-	
-	/**
-	 * Use dependencies in the test section
-	 */
-	public final ObservableProperty<Boolean> useTest;
-	
 	/* -----------------------------------------------------------------------
 	 * Constructors
 	 * -----------------------------------------------------------------------*/
@@ -97,8 +87,6 @@ public abstract class JfxOptions {
 		platform = ObservableProperty.create(Platform.getRunningPlatform());
 		modules = ObservableProperty.create();
 		dependencyConfiguration = ObservableProperty.create(DEFAULT_DEPENDENCY_CONFIGURATION);
-		testDependencyConfiguration = ObservableProperty.create("testImplementation");
-		useTest = ObservableProperty.create(true);
 		
 		updateProjectConfiguration(null, true);
 		
@@ -107,10 +95,7 @@ public abstract class JfxOptions {
 		arch.addChangeListener(this::updateArch);
 		platform.addChangeListener(this::updatePlatform);
 		modules.addChangeListener(this::updateModules);
-		dependencyConfiguration.addChangeListener(this::updateDependencyConfiguration);
-		useTest.addChangeListener((old, nVal) -> {
-			if (old != nVal) updateProjectConfiguration(null, false);
-		});
+		dependencyConfiguration.addChangeListener((o, n) -> updateDependencyConfiguration(false, o, n));
 	}
 	
 	/* -----------------------------------------------------------------------
@@ -124,9 +109,12 @@ public abstract class JfxOptions {
 		}
 	}
 	
-	private void updateDependencyConfiguration(@Nullable String old, @Nullable String newConfiguration) {
+	private void updateDependencyConfiguration(boolean isTest, @Nullable String old, @Nullable String newConfiguration) {
 		if (!Objects.equals(old, newConfiguration)) {
-			Msg.error(project, "Configuration update -> %s to %s", toObjString(old), toObjString(newConfiguration));
+			String kind = isTest ? "(Test)" : "(Common)";
+			Msg.error(project, "Configuration update %s -> %s to %s", kind,
+					  toObjString(old),
+					  toObjString(newConfiguration));
 			updateProjectConfiguration(old, false);
 		}
 	}
@@ -165,10 +153,7 @@ public abstract class JfxOptions {
 			arch.getOrElse(Arch.getRunningArch()));
 		
 		// Remove old dependencies
-		removeOldDependencies(false, oldConfiguration);
-		if (useTest.isPresent() && testDependencyConfiguration.isPresent() && useTest.get()) {
-			removeOldDependencies(true, testDependencyConfiguration.get());
-		}
+		removeOldDependencies(oldConfiguration);
 		
 		// Resolve dependencies
 		for (String item : moduleArtifacts) {
@@ -178,11 +163,8 @@ public abstract class JfxOptions {
 			// Attach dependency
 			project.getDependencies()
 				.add(dependencyConfiguration.getOrElse(DEFAULT_DEPENDENCY_CONFIGURATION), artifactId);
-			
-			if (useTest.isPresent() && testDependencyConfiguration.isPresent() && useTest.get()) {
-				project.getDependencies()
-					.add(testDependencyConfiguration.get(), artifactId);
-			}
+			project.getDependencies()
+				.add(DEFAULT_TEST_DEPENDENCY_CONFIGURATION, artifactId);
 		}
 	}
 	
@@ -191,11 +173,10 @@ public abstract class JfxOptions {
 	 *
 	 * @param configuration dependency configuration
 	 */
-	private void removeOldDependencies(boolean isDebug, @Nullable String configuration) {
+	private void removeOldDependencies(@Nullable String configuration) {
 		// Resolve project configuration
-		String realConfiguration =
-			Obj.isNull(configuration) ? (isDebug ? DEFAULT_DEBUG_DEPENDENCY_CONFIGURATION : DEFAULT_DEPENDENCY_CONFIGURATION) :
-			configuration;
+		String realConfiguration = Obj.isNull(configuration) ? DEFAULT_DEPENDENCY_CONFIGURATION :
+								   configuration;
 		Configuration container = project.getConfigurations()
 			.findByName(realConfiguration);
 		
