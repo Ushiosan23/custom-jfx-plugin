@@ -31,6 +31,11 @@ public abstract class JfxOptions {
 	 */
 	private static final String DEFAULT_DEPENDENCY_CONFIGURATION = "implementation";
 	
+	/**
+	 * Default JavaFX dependency configuration
+	 */
+	private static final String DEFAULT_DEBUG_DEPENDENCY_CONFIGURATION = "testImplementation";
+	
 	/* -----------------------------------------------------------------------
 	 * Properties
 	 * -----------------------------------------------------------------------*/
@@ -160,9 +165,9 @@ public abstract class JfxOptions {
 			arch.getOrElse(Arch.getRunningArch()));
 		
 		// Remove old dependencies
-		removeOldDependencies(oldConfiguration);
+		removeOldDependencies(false, oldConfiguration);
 		if (useTest.isPresent() && testDependencyConfiguration.isPresent() && useTest.get()) {
-			removeOldDependencies(testDependencyConfiguration.get());
+			removeOldDependencies(true, testDependencyConfiguration.get());
 		}
 		
 		// Resolve dependencies
@@ -186,11 +191,11 @@ public abstract class JfxOptions {
 	 *
 	 * @param configuration dependency configuration
 	 */
-	private void removeOldDependencies(@Nullable String configuration) {
+	private void removeOldDependencies(boolean isDebug, @Nullable String configuration) {
 		// Resolve project configuration
-		String realConfiguration = Obj.isNull(configuration) ?
-								   dependencyConfiguration.getOrElse(DEFAULT_DEPENDENCY_CONFIGURATION) :
-								   configuration;
+		String realConfiguration =
+			Obj.isNull(configuration) ? (isDebug ? DEFAULT_DEBUG_DEPENDENCY_CONFIGURATION : DEFAULT_DEPENDENCY_CONFIGURATION) :
+			configuration;
 		Configuration container = project.getConfigurations()
 			.findByName(realConfiguration);
 		
